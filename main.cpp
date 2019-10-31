@@ -2,46 +2,55 @@
 #include <fstream>
 using namespace std;
 
-void readEntry( int& entry);
+void readEntry(ifstream& in, int& entry);
 
 int main() {
+    ifstream inFile;
+    ofstream outFile;
+    inFile.open("../table");
+    outFile.open("../output");
 
+    if(!inFile.is_open()){
+        cout << "Could not open file." << endl;
+    }
 
     // read table dimensions and allocate 2D array
     int nRows, nCols;
-    cout<<"Enter the number of rows and columns: ";
-    cin >> nRows >> nCols;
+    inFile >> nRows >> nCols;
     int** table = new int*[nRows];
     for(int i = 0; i < nRows; i++) {
         table[i] = new int[nCols];
     }
 
     // read table data
-    cout<<"Enter your numbers: ";
     for(int i = 0; i < nRows; i++) {
         for(int j = 0; j < nCols; j++) {
             try {
-              readEntry(table[i][j]);
+              readEntry(inFile, table[i][j]);
             }
             catch (int x) {
                     cout << "Entry " << i << "," << j << " not an integer, was set to " << x << ", now setting it to 0" << endl;
                     table[i][j] = 0;
-                    cin.clear();
+                    inFile.clear();
                     string tmp;
-                    cin >> tmp;
+                    inFile >> tmp;
             }
         }
     }
 
 
     // write table data to the screen in transposed order
-    cout << nCols << " " << nRows << endl;
+    outFile << nCols << " " << nRows << endl;
     for(int i = 0; i < nCols; i++) {
         for(int j = 0; j < nRows; j++) {
-            cout << table[j][i] << " ";
+            outFile << table[j][i] << " ";
         }
-        cout << endl;
+        outFile << endl;
     }
+
+    outFile.flush();
+    inFile.close();
+    outFile.close();
 
 
     // free memory
@@ -52,10 +61,9 @@ int main() {
 
 }
 
-void readEntry( int& entry) {
-
-    cin >> entry;
-    if(cin.fail()) {
+void readEntry(ifstream& in, int& entry) {
+    in >> entry;
+    if(in.fail()) {
         throw entry;
     }
 }
