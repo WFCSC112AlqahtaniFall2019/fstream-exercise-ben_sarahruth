@@ -35,6 +35,7 @@ int main() {
                     string tmp;
                     inFile >> tmp;
             }
+            inFile.clear();
         }
     }
 
